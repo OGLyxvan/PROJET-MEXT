@@ -9,25 +9,40 @@ while True:
     if url == 'quit':
         break
     count_total += 1
+    resultat = {
+    "url": url,
+    "longueur_suspecte": False,
+    "mot_suspect": False,
+    "http": False,
+    "extension_suspecte": False,
+    "marque_suspecte": False,
+    "score": 0
+}
     suspects = False
     for j in mots_suspects:
         if j in url:
-            suspects = True
+            resultat["mot_suspect"] = True
+            resultat["score"] += 1
             break
     if len(url) > 30:
-        suspects = True
+        resultat["longueur_suspecte"] = True
+        resultat["score"] += 1
     if url.startswith("http://"):
-        suspects = True
+        resultat["http"] = True
+        resultat["score"] += 1
     if url.endswith(nom_de_domaine):
-        suspects = True
+        resultat["extension_suspecte"] = True
+        resultat["score"] += 1
     for k in marques:
         if k in url:
-            suspects = True
+            resultat["marque_suspecte"] = True
+            resultat["score"] += 1
             break
-    if suspects == True:
-        count_suspect += 1    
-    if suspects:
+    if resultat["score"] >= 3:
+        count_suspect += 1
         print(f"{url} -> 🚨 PHISHING DÉTECTÉ")
+    elif resultat["score"] >= 1:
+        print(f"{url} -> ⚠️ SUSPECTE")
     else:
         print(f"{url} -> ✅ URL NORMALE")
 print(f"--- Résultat ---\n {count_suspect} URL(s) suspecte(s) trouvée(s) sur {count_total}\n")
